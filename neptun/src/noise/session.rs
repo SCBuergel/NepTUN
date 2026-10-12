@@ -34,7 +34,10 @@ const AEAD_SIZE: usize = 16;
 
 // Receiving buffer constants
 const WORD_SIZE: u64 = 64;
-const N_WORDS: u64 = 16; // Suffice to reorder 64*16 = 1024 packets; can be increased at will
+// 64*128 = 8192 packets of reordering tolerance, the Linux kernel's window: over a mixnet whose links stall
+// and release traffic in bursts, in-order delivery of frames one to four seconds old at ~1000 packets/s
+// needs more than the 1024 the original value allowed (anything older is dropped as a replay).
+const N_WORDS: u64 = 128;
 const N_BITS: u64 = WORD_SIZE * N_WORDS;
 
 #[derive(Debug, Clone, Default)]
