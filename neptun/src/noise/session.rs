@@ -40,7 +40,7 @@ const WORD_SIZE: u64 = 64;
 const N_WORDS: u64 = 128;
 const N_BITS: u64 = WORD_SIZE * N_WORDS;
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 struct ReceivingKeyCounterValidator {
     /// In order to avoid replays while allowing for some reordering of the packets, we keep a
     /// bitmap of received packets, and the value of the highest counter
@@ -48,6 +48,17 @@ struct ReceivingKeyCounterValidator {
     /// Used to estimate packet loss
     receive_cnt: u64,
     bitmap: [u64; N_WORDS as usize],
+}
+
+// `Default` is derived for arrays of at most 32 elements only.
+impl Default for ReceivingKeyCounterValidator {
+    fn default() -> Self {
+        Self {
+            next: 0,
+            receive_cnt: 0,
+            bitmap: [0u64; N_WORDS as usize],
+        }
+    }
 }
 
 impl ReceivingKeyCounterValidator {
